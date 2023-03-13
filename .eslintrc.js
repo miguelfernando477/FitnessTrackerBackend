@@ -11,6 +11,7 @@ module.exports = {
         "ecmaVersion": 13
     },
     "rules": {
+        "no-useless-catch": false
     },
     "plugins": ["jest"]
 };

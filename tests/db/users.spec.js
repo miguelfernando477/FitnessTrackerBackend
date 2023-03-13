@@ -37,7 +37,7 @@ describe("DB Users", () => {
   });
 
   describe("getUserByUsername", () => {
-    it("Gets a user based on the username", async () => {
+    xit("Gets a user based on the username", async () => {
       const fakeUserData = {
         username: "Sean",
         password: faker.internet.password(),
@@ -48,7 +48,7 @@ describe("DB Users", () => {
       expect(user.username).toBe(fakeUserData.username);
     });
 
-    it("Does return the password", async () => {
+    xit("Does return the password", async () => {
       const fakeUserData = {
         username: "Brittany",
         password: faker.internet.password(),

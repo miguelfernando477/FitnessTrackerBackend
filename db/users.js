@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-catch */
 const client = require("./client");
 const bcrypt = require("bcrypt");
 
@@ -15,14 +14,14 @@ async function createUser({ username, password }) {
       rows: [user],
     } = await client.query(
       `
-        INSERT INTO users (username, hashedPassword)
+        INSERT INTO users (username, password)
         VALUES ($1, $2)
         ON CONFLICT (username) DO NOTHING
         RETURNING *;
         `,
       [username, hashedPassword]
     );
-
+    delete user.password
     return user;
   } catch (error) {
     throw error
