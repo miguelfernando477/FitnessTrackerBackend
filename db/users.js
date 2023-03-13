@@ -47,8 +47,8 @@ async function getUserById(userId) {
     } = await client.query(`
          SELECT id, username
          FROM users
-         WHERE id=${userId};
-        `);
+         WHERE id=$1;
+        `, [userId]);
 
     if (!user) {
       return null;
