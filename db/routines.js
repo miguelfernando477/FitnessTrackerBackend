@@ -55,8 +55,10 @@ async function getAllRoutines() {
       rows
     } = await client.query(`
       SELECT * FROM routines
+      JOIN users ON routines."creatorId"=users.id;
+     
       `)
-
+    // return rows
     return attachActivitiesToRoutines(rows)
   } catch (error) {
     throw error
