@@ -54,27 +54,103 @@ async function getAllRoutines() {
     const {
       rows
     } = await client.query(`
-      SELECT * FROM routines
-      JOIN users ON routines."creatorId"=users.id;
-     
+      SELECT routines.id, routines."creatorId", routines."isPublic", routines.name, routines.goal, users.username AS "creatorName" 
+      FROM routines
+      JOIN users 
+      ON routines."creatorId"=users.id
       `)
-    // return rows
     return attachActivitiesToRoutines(rows)
   } catch (error) {
     throw error
   }
-
-  //mostly finished, just need to do a JOIN function with an AS keyword to rename usernames as creatorName.
-  //start with JOIN function from juicebox
 }
 
-async function getAllPublicRoutines() {}
+async function getAllPublicRoutines() {
+  try {
+    const {
+      rows
+    } = await client.query(`
+      SELECT routines.id, routines."creatorId", routines."isPublic", routines.name, routines.goal, users.username AS "creatorName" 
+      FROM routines
+      JOIN users 
+      ON routines."creatorId"=users.id
+      WHERE routines."isPublic"=true
+      `)
+    return attachActivitiesToRoutines(rows)
+  } catch (error) {
+    throw error
+  }
+}
 
-async function getAllRoutinesByUser({ username }) {}
+async function getAllRoutinesByUser({ username }) {
+  try {
+    const {
+      rows
+    } = await client.query(`
+      SELECT routines.id, routines."creatorId", routines."isPublic", routines.name, routines.goal, users.username AS "creatorName" 
+      FROM routines
+      JOIN users 
+      ON routines."creatorId"=users.id
+      WHERE users.username=$1
+      `, [username])
+    return attachActivitiesToRoutines(rows)
+  } catch (error) {
+    throw error
+  }
+}
 
-async function getPublicRoutinesByUser({ username }) {}
+async function getPublicRoutinesByUser({ username }) {
+  try {
+    const {
+      rows
+    } = await client.query(`
+      SELECT routines.id, routines."creatorId", routines."isPublic", routines.name, routines.goal, users.username AS "creatorName" 
+      FROM routines
+      JOIN users 
+      ON routines."creatorId"=users.id
+      WHERE users.username=$1
+      AND routines."isPublic"=true
+      `, [username])
+    return attachActivitiesToRoutines(rows)
+  } catch (error) {
+    throw error
+  }
+}
 
-async function getPublicRoutinesByActivity({ id }) {}
+async function getPublicRoutinesByActivity({ id }) {
+  try {
+    const {
+      rows
+    } = await client.query(`
+      SELECT routines.id, routines."creatorId", routines."isPublic", routines.name, routines.goal, users.username AS "creatorName" 
+      FROM routines
+      JOIN users 
+      ON routines."creatorId"=users.id
+      WHERE routines."isPublic"=true
+      `)
+    let routinesActivities = attachActivitiesToRoutines(rows)
+    
+    // loop over the routines
+    // for (const routine of routinesActivities) {
+    //   // filter the activities to only include those that have this routineId
+    //   const activitiesToAdd = activities.filter(
+    //     (activity) => activity.routineId === routine.id
+    //   );
+    //   // attach the activities to each single routine
+    //   routine.activities = activitiesToAdd;
+    // }
+
+    //every activity inside each routine must match id which is the activity id
+
+    const routinesToReturn = routinesActivities.filter(
+      (routine) => true
+    )
+
+    // return attachActivitiesToRoutines(rows)
+  } catch (error) {
+    throw error
+  }
+}
 
 async function updateRoutine({ id, ...fields }) {}
 
