@@ -126,27 +126,11 @@ async function getPublicRoutinesByActivity({ id }) {
       FROM routines
       JOIN users 
       ON routines."creatorId"=users.id
-      WHERE routines."isPublic"=true
-      `)
-    let routinesActivities = attachActivitiesToRoutines(rows)
-    
-    // loop over the routines
-    // for (const routine of routinesActivities) {
-    //   // filter the activities to only include those that have this routineId
-    //   const activitiesToAdd = activities.filter(
-    //     (activity) => activity.routineId === routine.id
-    //   );
-    //   // attach the activities to each single routine
-    //   routine.activities = activitiesToAdd;
-    // }
-
-    //every activity inside each routine must match id which is the activity id
-
-    const routinesToReturn = routinesActivities.filter(
-      (routine) => true
-    )
-
-    // return attachActivitiesToRoutines(rows)
+      JOIN routine_activities ON routines.id=routine_activities."routineId"
+      WHERE routines."isPublic"=true AND routine_activities."activityId"=$1
+      `,[id])
+   
+    return attachActivitiesToRoutines(rows)
   } catch (error) {
     throw error
   }
