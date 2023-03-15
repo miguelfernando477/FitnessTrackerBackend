@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-catch */
 const express = require("express");
-const { getUserByUsername, createUser, getUser } = require("../db");
+const { getUserByUsername, createUser, getUser, getAllRoutinesByUser, getPublicRoutinesByUser } = require("../db");
 const jwt = require("jsonwebtoken");
 const errorMessages = require("../errors.js");
 const { requireUser } = require("./utils.js")
@@ -98,5 +98,21 @@ router.get("/me", requireUser, async (req, res, next) => {
 })
 
 // GET /api/users/:username/routines
-
+router.get("/:username/routines", async (req, res, next) => {
+    const { username } = req.params;
+    
+    try {
+      if (req.user.username == username) {
+        let routines = await getAllRoutinesByUser({username})
+        res.send(routines)
+    } else {
+        let publicRoutines = await getPublicRoutinesByUser({username})
+        res.send(publicRoutines)
+      }
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  })
+  
 module.exports = router;
