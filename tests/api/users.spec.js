@@ -70,8 +70,7 @@ describe("/api/users", () => {
       // Create the user through the API
       const response = await request(app)
         .post("/api/users/register")
-        .send(fakeUserData);
-
+        .send(fakeUserData)
       expectNotToBeError(response.body);
 
       // Grab the user from the DB manually so we can
@@ -109,7 +108,8 @@ describe("/api/users", () => {
       const response = await request(app)
         .post("/api/users/register")
         .send(secondUserData);
-
+        
+   
       expectToBeError(response.body);
 
       expectToHaveErrorMessage(
@@ -146,7 +146,6 @@ describe("/api/users", () => {
       const response = await request(app)
         .post("/api/users/login")
         .send(userData);
-
       expectNotToBeError(response.body);
 
       expect(response.body).toEqual(
@@ -216,7 +215,7 @@ describe("/api/users", () => {
 
     xit("rejects requests with no valid token", async () => {
       const response = await request(app).get("/api/users/me");
-
+    
       expect(response.status).toBe(401);
 
       expectToHaveErrorMessage(response.body, UnauthorizedError());
@@ -235,9 +234,8 @@ describe("/api/users", () => {
       const response = await request(app)
         .get(`/api/users/${sean.fakeUser.username}/routines`)
         .set("Authorization", `Bearer ${token}`);
-
       expectNotToBeError(response.body);
-
+        
       // Get the routines from the DB
       const routinesFromDB = await getPublicRoutinesByUser(sean.fakeUser);
 
