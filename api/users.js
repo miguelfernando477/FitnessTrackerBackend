@@ -1,9 +1,11 @@
 /* eslint-disable no-useless-catch */
 const express = require("express");
-const router = express.Router();
-const { getUserByUsername, createUser } = require("../db");
+const { getUserByUsername, createUser, getUser } = require("../db");
 const jwt = require("jsonwebtoken");
 const errorMessages = require("../errors.js");
+const { requireUser } = require("./utils.js")
+
+const router = express.Router();
 
 // POST /api/users/register
 router.post("/register", async (req, res, next) => {
@@ -52,7 +54,7 @@ router.post("/register", async (req, res, next) => {
 });
 
 // POST /api/users/login
-usersRouter.post("/login", async (req, res, next) => {
+router.post("/login", async (req, res, next) => {
     const { username, password } = req.body;
   
     //request must have both
@@ -64,15 +66,15 @@ usersRouter.post("/login", async (req, res, next) => {
     }
   
     try {
-      const user = await getUserByUsername(username);
+      const user = await getUser({ username, password });
   
-      if (user && user.password == password) {
+      if (user) {
         const jwt = require("jsonwebtoken");
         const token = jwt.sign(
           { id: user.id, username: user.username },
           process.env.JWT_SECRET
         );
-        res.send({ message: "you're logged in!", token: token });
+        res.send({ message: "you're logged in!", token: token, user:user });
       } else {
         next({
           name: "IncorrectCredentialsError",
@@ -84,7 +86,16 @@ usersRouter.post("/login", async (req, res, next) => {
       next(error);
     }
   });
+
 // GET /api/users/me
+router.get("/me", requireUser, async (req, res, next) => {
+  try {
+    res.send(req.user);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+})
 
 // GET /api/users/:username/routines
 
