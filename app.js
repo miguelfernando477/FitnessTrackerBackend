@@ -32,13 +32,11 @@ app.use("*", (req, res) => {
     });
 });
 
+// error handling middleware
 app.use((error, req, res, next) => {
-    res.status(500);
-    console.log("An Error has occurred");
-  
-    res.send({
-      message: error.message,
-    });
+  console.error("SERVER ERROR: ", error);
+  if (res.statusCode < 400) res.status(500);
+  res.send({ name: error.name, message: error.message, error:error.message });
 });
 
 const client = require("./db/client.js");
