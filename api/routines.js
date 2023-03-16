@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllRoutines, createRoutine, getRoutineById, updateRoutine, destroyRoutine } = require('../db');
+const { getAllRoutines, createRoutine, getRoutineById, updateRoutine, destroyRoutine, addActivityToRoutine, getRoutineActivitiesByRoutine } = require('../db');
 const router = express.Router();
 const { requireUser } = require("./utils.js");
 const errorMessages = require("../errors.js");
@@ -65,6 +65,7 @@ router.patch("/:routineId", requireUser, async (req, res, next) => {
       next({ name, message });
     }
   });
+
 // DELETE /api/routines/:routineId
 router.delete("/:routineId", requireUser, async (req, res, next) => {
     const { routineId } = req.params;
@@ -86,6 +87,41 @@ router.delete("/:routineId", requireUser, async (req, res, next) => {
       next({ name, message });
     }
   });
+
 // POST /api/routines/:routineId/activities
+router.post("/:routineId/activities", async (req, res, next) => {
+    const { activityId, count, duration } = req.body;
+
+    const { routineId } = req.params;
+
+    try {
+      //To prevent duplicate routine/activity pairs:
+      //-get list from getRoutineActivitiesByRoutine(routineId)
+      //-search through list to see if it contains activityId
+      //-if it does, throw an error, else do the rest of the code
+      
+      const routineActivities = await getRoutineActivitiesByRoutine({id:routineId});
+
+      let duplicates = false;
+
+      routineActivities.map((routineActivity) => {
+        if (routineActivity.activityId === activityId) {
+          duplicates = true;
+        }
+      })
+
+      if (duplicates) {
+        next({
+          name: "DuplicateRoutineActivityError",
+          message: errorMessages.DuplicateRoutineActivityError(routineId, activityId),
+        });
+      } else {
+        const routineActivity = await addActivityToRoutine({ routineId, activityId, count, duration });
+        res.send(routineActivity);
+      }
+    } catch ({ name, message }) {
+      next({ name, message });
+    }
+  });
 
 module.exports = router;
