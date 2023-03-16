@@ -278,7 +278,6 @@ describe("/api/routines", () => {
         .post(`/api/routines/${fakeRoutine.id}/activities`)
         .set("Authorization", `Bearer ${token}`)
         .send(routineActivityData);
-        console.log(response.body, "$$$")
       expectToHaveErrorMessage(
         response.body,
         DuplicateRoutineActivityError(fakeRoutine.id, fakeActivity.id)
