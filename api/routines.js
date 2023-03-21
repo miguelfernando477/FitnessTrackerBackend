@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllRoutines, createRoutine, getRoutineById, updateRoutine, destroyRoutine, addActivityToRoutine, getRoutineActivitiesByRoutine } = require('../db');
+const { getAllPublicRoutines, createRoutine, getRoutineById, updateRoutine, destroyRoutine, addActivityToRoutine, getRoutineActivitiesByRoutine } = require('../db');
 const router = express.Router();
 const { requireUser } = require("./utils.js");
 const errorMessages = require("../errors.js");
@@ -7,7 +7,7 @@ const errorMessages = require("../errors.js");
 // GET /api/routines
 router.get("/", async (req, res, next) => {
     try {
-      let routines = await getAllRoutines();
+      let routines = await getAllPublicRoutines();
       res.send(routines);
     } catch (error) {
       console.log(error);
