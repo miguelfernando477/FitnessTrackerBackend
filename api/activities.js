@@ -51,6 +51,8 @@ router.post("/", requireUser, async (req, res, next) => {
   const { name, description } = req.body;
   const _activity = await getActivityByName(name);
   try {
+    let createdActivity;
+
     if (_activity) {
       res.status(401);
       next({
@@ -58,7 +60,9 @@ router.post("/", requireUser, async (req, res, next) => {
         name: "ActivityAlreadyExist",
       });
     }
-    const createdActivity = await createActivity({ name, description });
+    else {
+      createdActivity = await createActivity({ name, description });
+    }
     if (createdActivity) {
       res.send(createdActivity);
     }
